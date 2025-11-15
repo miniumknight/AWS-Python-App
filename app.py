@@ -51,8 +51,8 @@ def chat():
     
     try:
         response = bedrock_agent.invoke_agent(
-            agentid = os.environ['BEDROCK_AGENT_ID'],
-            agentAliess = os.environ['BEDROCK_AGENT_ALIAS'],
+            agentId = os.environ['BEDROCK_AGENT_ID'],
+            agentAliasId = os.environ['BEDROCK_ALIAS_ID'],
             sessionId = session_id,
             inputText = user_message
         )
