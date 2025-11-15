@@ -12,7 +12,7 @@ import uuid
 app = Flask(__name__)
 
 dynamodb = boto3.resource('dynamodb',region_name=os.environ['AWS_REGION'])
-bedrock_agent = boto3.Client("bedrock-agent-runtime", region_name=os.environ['AWS_REGION'])
+bedrock_agent = boto3.client("bedrock-agent-runtime", region_name=os.environ['AWS_REGION'])
 table = dynamodb.Table(os.environ['DDB_TABLE'])
 
 
