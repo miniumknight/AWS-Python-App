@@ -45,7 +45,7 @@ def chat():
     if not user_message:
         return jsonify({'error': 'Message is required.'}), 400
 
-    session_id = data.get('session_id') or str(uuid.uuid4()))
+    session_id = data.get('session_id') or str(uuid.uuid4())
     
     try:
         response = bedrock_agent.invoke_agent(
