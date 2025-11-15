@@ -6,6 +6,8 @@ from pprint import pprint
 import boto3
 from botocore.exceptions import ClientError
 import os
+import json
+import uuid
 
 app = Flask(__name__)
 
@@ -56,7 +58,7 @@ def chat():
         )
 
         assistant_reply = ''
-        for event in response.get("completion" []):
+        for event in response.get("completion", []):
                 if "chunk" in  event and "bytes" in event["chunk"]:
                     assistant_reply += event["chunk"]["bytes"].decode('utf-8')
     
