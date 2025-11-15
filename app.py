@@ -10,6 +10,7 @@ import os
 app = Flask(__name__)
 
 dynamodb = boto3.resource('dynamodb',region_name=os.environ['AWS_REGION'])
+bedrock_agent = boto3.Client("bedrock-agent-runtime", region_name=os.environ['AWS_REGION'])
 table = dynamodb.Table(os.environ['DDB_TABLE'])
 
 
@@ -35,6 +36,38 @@ def delete_movie(title, year):
 def home():
   return render_template('index.html')
 
+#AI Agent Chat
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    user_message = data.get('message', '').strip()
+
+    if not user_message:
+        return jsonify({'error': 'Message is required.'}), 400
+
+    session_id = data.get('session_id') or str(uuid.uuid4()))
+    
+    try:
+        response = bedrock_agent.invoke_agent(
+            agentid = os.environ['BEDROCK_AGENT_ID'],
+            agentAliess = os.environ['BEDROCK_AGENT_ALIAS'],
+            sessionId = session_id,
+            inputText = user_message
+        )
+
+        assistant_reply = ''
+        for event in response.get("completion" []):
+                if "chunk" in  event and "bytes" in event["chunk"]:
+                    assistant_reply += event["chunk"]["bytes"].decode('utf-8')
+    
+        return jsonify({
+            'reply': assistant_reply,
+            'session_id': session_id 
+        })
+
+    except Exception as e:
+        int("Error invoking agent:", e)
+        return jsonify({"error": "Failed to call Bedrock Agent"}), 500
 
 # POST /api/movie data: {name:}
 @app.route('/api/movie', methods=['POST'])
